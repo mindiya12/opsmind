@@ -199,13 +199,6 @@ if not st.session_state.messages:
     st.markdown("""
     <div class="welcome-card">
     <h4 style="margin-top:0">👋 What can I help you diagnose?</h4>
-    <p style="margin-bottom:8px;color:#555">Try asking:</p>
-    <ul style="color:#555;margin:0">
-        <li>What happened with the database at 3:42 AM?</li>
-        <li>Are there any memory or disk space issues?</li>
-        <li>Why are we getting 502 errors from nginx?</li>
-        <li>What anomalies occurred overnight?</li>
-    </ul>
     </div>
     """, unsafe_allow_html=True)
 

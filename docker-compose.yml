@@ -1,0 +1,58 @@
+# docker-compose.yml — OpsMind AI
+#
+# Runs the full application with one command: docker compose up
+#
+# Why docker-compose instead of just `docker run`?
+# docker-compose manages multi-service setups, environment injection,
+# volume mounting, and port mapping declaratively in one file.
+# It's also the standard for local development and CI/CD pipelines.
+
+version: "3.9"
+
+services:
+  opsmind:
+    # Build from the Dockerfile in the current directory
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Name the running container for easy reference
+    container_name: opsmind_ai
+
+    # Map host port 8501 → container port 8501
+    # Access the app at: http://localhost:8501
+    ports:
+      - "8501:8501"
+
+    # Inject environment variables from your .env file.
+    # The GROQ_API_KEY never touches the image — it's passed at runtime only.
+    env_file:
+      - .env
+
+    # Mount volumes for data that should persist between container restarts:
+    #
+    # ./data → /app/data
+    #   Your log files and runbooks. Mount as read-only (:ro) since the
+    #   container only reads from here, never writes.
+    #
+    # ./chroma_db → /app/chroma_db
+    #   The vector database. Must be writable — ingestion writes here.
+    #   Persists between restarts so you don't re-embed on every launch.
+    #
+    # Why volumes instead of just COPY in Dockerfile?
+    # Volumes let you add new log files or runbooks without rebuilding the image.
+    # Just drop a file in data/ and re-run ingestion — no docker build needed.
+    volumes:
+      - ./data:/app/data:ro
+      - ./chroma_db:/app/chroma_db
+
+    # Restart policy — restart unless explicitly stopped with `docker stop`
+    restart: unless-stopped
+
+    # Health check at the compose level (mirrors Dockerfile HEALTHCHECK)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
