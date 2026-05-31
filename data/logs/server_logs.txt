@@ -1,0 +1,82 @@
+2024-01-15 00:00:01 INFO  system: Daily backup job started — target: /var/backups/prod
+2024-01-15 00:00:44 INFO  system: Daily backup completed — 24.3 GB processed in 43s
+2024-01-15 00:05:11 INFO  nginx: Worker processes restarted — 4 workers active
+2024-01-15 00:15:02 INFO  nginx: Traffic normal — 847 req/min, p99 latency 142ms
+2024-01-15 00:30:00 INFO  database: Checkpoint complete — WAL files flushed
+2024-01-15 01:00:00 INFO  system: Heartbeat OK — CPU 18%, MEM 61%, DISK /var 34%
+2024-01-15 01:15:44 INFO  nginx: Traffic normal — 612 req/min, p99 latency 138ms
+2024-01-15 02:00:00 INFO  system: Heartbeat OK — CPU 21%, MEM 63%, DISK /var 34%
+2024-01-15 02:30:00 INFO  database: Autovacuum running on table users (52,114 rows)
+2024-01-15 03:00:00 INFO  system: Heartbeat OK — CPU 22%, MEM 64%, DISK /var 34%
+
+--- INCIDENT 1: Database connection pool exhaustion (03:42 — 03:48) ---
+
+2024-01-15 03:41:50 WARN  database: Connection pool utilization at 82% (41/50 connections)
+2024-01-15 03:42:05 WARN  database: Connection pool utilization at 94% (47/50 connections)
+2024-01-15 03:42:15 ERROR nginx: Upstream timeout after 30000ms — GET /api/v1/users [502]
+2024-01-15 03:42:16 ERROR nginx: Upstream timeout after 30000ms — POST /api/v1/orders [502]
+2024-01-15 03:42:17 ERROR nginx: Upstream timeout after 30000ms — GET /api/v1/products [502]
+2024-01-15 03:42:20 ERROR database: Connection pool exhausted — max_connections=50 reached
+2024-01-15 03:42:20 ERROR database: New connection requests queued — queue depth: 23
+2024-01-15 03:42:22 WARN  application: Database connection attempt 1/3 failed — retrying in 2s
+2024-01-15 03:42:24 WARN  application: Database connection attempt 2/3 failed — retrying in 4s
+2024-01-15 03:42:28 ERROR application: Database connection attempt 3/3 failed — giving up
+2024-01-15 03:42:28 ERROR application: Serving degraded responses — returning cached data where possible
+2024-01-15 03:42:29 ERROR nginx: Upstream timeout after 30000ms — GET /api/v1/dashboard [502]
+2024-01-15 03:43:00 ERROR database: 12 connections detected as stale (idle > 300s) — will be reclaimed
+2024-01-15 03:43:05 WARN  nginx: Upstream error rate: 78% — circuit breaker evaluating
+2024-01-15 03:44:00 INFO  database: Reclaiming stale connections — 8 of 12 reclaimed so far
+2024-01-15 03:45:15 INFO  database: Stale connection reclaim complete — 12 connections freed
+2024-01-15 03:45:20 INFO  database: Connection pool utilization dropped to 38% (19/50)
+2024-01-15 03:45:25 INFO  application: Database connection restored successfully
+2024-01-15 03:45:28 INFO  nginx: Upstream recovery detected — routing restored to primary
+2024-01-15 03:46:00 INFO  nginx: Error rate recovering — 12% upstream errors (was 78%)
+2024-01-15 03:48:00 INFO  nginx: Traffic normal — 831 req/min, p99 latency 155ms
+2024-01-15 03:48:05 INFO  application: Serving normal responses — cache fallback disabled
+
+--- NORMAL OPERATION (04:00 — 09:59) ---
+
+2024-01-15 04:00:00 INFO  system: Heartbeat OK — CPU 19%, MEM 65%, DISK /var 34%
+2024-01-15 05:00:00 INFO  system: Heartbeat OK — CPU 17%, MEM 64%, DISK /var 35%
+2024-01-15 06:00:00 INFO  system: Heartbeat OK — CPU 23%, MEM 66%, DISK /var 35%
+2024-01-15 07:00:00 INFO  system: Heartbeat OK — CPU 31%, MEM 68%, DISK /var 35%
+2024-01-15 07:30:00 INFO  nginx: Traffic increasing — 1,840 req/min (morning peak starting)
+2024-01-15 08:00:00 INFO  system: Heartbeat OK — CPU 44%, MEM 71%, DISK /var 35%
+2024-01-15 09:00:00 INFO  system: Heartbeat OK — CPU 52%, MEM 73%, DISK /var 35%
+2024-01-15 09:30:00 INFO  database: Connection pool healthy — 28/50 connections active
+
+--- INCIDENT 2: JVM memory spike from batch job (10:15 — 10:48) ---
+
+2024-01-15 10:15:00 INFO  analytics: Monthly report batch job started — processing 2.3M records
+2024-01-15 10:15:30 INFO  system: Heartbeat OK — CPU 67%, MEM 73%, DISK /var 35%
+2024-01-15 10:18:00 WARN  jvm: Heap usage at 78% — GC running (minor collection)
+2024-01-15 10:20:00 WARN  jvm: Heap usage at 84% — GC running (major collection, 1.2s pause)
+2024-01-15 10:22:00 WARN  system: Memory pressure detected — available: 1.1 GB of 16 GB
+2024-01-15 10:23:00 WARN  jvm: Heap usage at 89% — GC running (full collection, 3.8s pause)
+2024-01-15 10:23:04 WARN  nginx: p99 latency spike to 4200ms — likely GC pause impact
+2024-01-15 10:24:00 ERROR jvm: Heap usage at 94% — OutOfMemoryError risk elevated
+2024-01-15 10:24:05 ERROR system: Heartbeat DEGRADED — MEM 92%, swap usage 340 MB
+2024-01-15 10:25:00 WARN  analytics: Batch job paused — waiting for memory pressure to ease
+2024-01-15 10:28:00 INFO  jvm: Heap usage stabilizing at 82% — GC frequency reduced
+2024-01-15 10:30:00 INFO  analytics: Batch job resumed — processing record 1,150,000 of 2,300,000
+2024-01-15 10:45:00 INFO  analytics: Batch job completed — 2.3M records processed in 30 minutes
+2024-01-15 10:46:00 INFO  jvm: Heap released post-batch — usage down to 61%
+2024-01-15 10:48:00 INFO  system: Heartbeat OK — CPU 48%, MEM 68%, DISK /var 35%
+
+--- NORMAL OPERATION (11:00 — 14:29) ---
+
+2024-01-15 11:00:00 INFO  system: Heartbeat OK — CPU 46%, MEM 67%, DISK /var 35%
+2024-01-15 12:00:00 INFO  system: Heartbeat OK — CPU 49%, MEM 68%, DISK /var 36%
+2024-01-15 13:00:00 INFO  system: Heartbeat OK — CPU 51%, MEM 69%, DISK /var 37%
+2024-01-15 14:00:00 INFO  system: Heartbeat OK — CPU 53%, MEM 70%, DISK /var 38%
+
+--- INCIDENT 3: Disk space warning on /var partition (14:30 — ongoing) ---
+
+2024-01-15 14:30:00 WARN  system: Disk usage on /var reached 85% — threshold: 80%
+2024-01-15 14:30:01 WARN  system: Top consumers: /var/log 42 GB, /var/lib/docker 38 GB
+2024-01-15 14:30:02 WARN  system: Log rotation may not be keeping up with write rate
+2024-01-15 14:31:00 WARN  nginx: Access log file size: 8.4 GB (last rotation: 7 days ago)
+2024-01-15 14:31:10 WARN  database: WAL archive directory: 14.2 GB — old segments not cleaned up
+2024-01-15 14:45:00 WARN  system: Disk usage on /var now at 87% — rate of growth: 2% per hour
+2024-01-15 15:00:00 WARN  system: Disk usage on /var now at 88% — immediate action recommended
+2024-01-15 15:00:01 ERROR system: Alert sent to on-call team — disk space critical

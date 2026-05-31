@@ -1,0 +1,55 @@
+2024-01-15 00:00:05 INFO  [auth-service] Startup complete — listening on :8080
+2024-01-15 00:00:06 INFO  [orders-service] Startup complete — listening on :8081
+2024-01-15 00:00:07 INFO  [users-service] Startup complete — listening on :8082
+2024-01-15 00:15:00 INFO  [orders-service] Processing rate: 142 orders/min — normal range
+2024-01-15 01:00:00 INFO  [users-service] Active sessions: 1,204 — cache hit rate 91%
+2024-01-15 02:00:00 INFO  [auth-service] Token validation rate: 8,400/min — no anomalies
+
+--- Application view of Incident 1 (DB pool exhaustion) ---
+
+2024-01-15 03:42:18 WARN  [users-service] DB query timeout — SELECT * FROM users WHERE id=? exceeded 5000ms
+2024-01-15 03:42:19 WARN  [orders-service] DB query timeout — INSERT INTO orders exceeded 5000ms
+2024-01-15 03:42:20 ERROR [users-service] Failed to acquire DB connection from pool — pool exhausted
+2024-01-15 03:42:20 ERROR [orders-service] Failed to acquire DB connection from pool — pool exhausted
+2024-01-15 03:42:21 ERROR [auth-service] Cannot validate session — DB unavailable, returning 503
+2024-01-15 03:42:22 WARN  [users-service] Falling back to Redis cache for user profile requests
+2024-01-15 03:42:23 ERROR [orders-service] Cannot process new orders — DB required, returning 503
+2024-01-15 03:42:25 ERROR [users-service] Cache miss for user_id=9124 — cannot serve request, 503
+2024-01-15 03:43:00 INFO  [orders-service] 503 response rate: 94% of incoming requests
+2024-01-15 03:43:30 WARN  [users-service] Redis cache approaching capacity — 78% full
+2024-01-15 03:44:00 INFO  [health-check] Service health: auth DEGRADED, orders DOWN, users DEGRADED
+2024-01-15 03:45:30 INFO  [orders-service] DB connection available — resuming order processing
+2024-01-15 03:45:31 INFO  [users-service] DB connection available — disabling cache fallback
+2024-01-15 03:45:32 INFO  [auth-service] Session validation restored — DB available
+2024-01-15 03:45:45 INFO  [orders-service] Backlog of 847 queued orders — beginning processing
+2024-01-15 03:48:00 INFO  [orders-service] Backlog cleared — normal processing resumed
+2024-01-15 03:48:05 INFO  [health-check] All services HEALTHY
+
+--- Normal operation ---
+
+2024-01-15 04:00:00 INFO  [orders-service] Processing rate: 31 orders/min — recovering to normal
+2024-01-15 07:00:00 INFO  [orders-service] Processing rate: 156 orders/min — morning peak
+2024-01-15 08:00:00 INFO  [users-service] Active sessions: 14,820 — peak load period
+2024-01-15 09:30:00 INFO  [health-check] All services HEALTHY — CPU 52%, response time p99 145ms
+
+--- Application view of Incident 2 (memory/GC pressure) ---
+
+2024-01-15 10:18:00 WARN  [analytics-service] Heap usage warning — 78% utilized
+2024-01-15 10:20:00 WARN  [analytics-service] GC major collection — 1.2s application pause
+2024-01-15 10:23:00 WARN  [analytics-service] GC full collection — 3.8s application pause
+2024-01-15 10:23:04 WARN  [users-service] Request timeout spike — p99 latency 4200ms (GC pause impact)
+2024-01-15 10:23:05 WARN  [orders-service] Request timeout spike — p99 latency 3900ms (GC pause impact)
+2024-01-15 10:24:00 ERROR [analytics-service] OutOfMemoryError risk — heap at 94%, GC not keeping up
+2024-01-15 10:24:10 WARN  [analytics-service] Pausing batch processing to allow GC recovery
+2024-01-15 10:28:00 INFO  [analytics-service] Heap stabilized — resuming batch at reduced throughput
+2024-01-15 10:45:00 INFO  [analytics-service] Monthly report batch COMPLETE — 2.3M records processed
+2024-01-15 10:46:00 INFO  [analytics-service] Heap released — GC returning memory to OS
+2024-01-15 10:48:00 INFO  [health-check] All services HEALTHY — memory pressure resolved
+
+--- Normal operation (afternoon) ---
+
+2024-01-15 11:00:00 INFO  [orders-service] Processing rate: 203 orders/min — normal peak
+2024-01-15 12:00:00 INFO  [users-service] Active sessions: 21,445 — lunch peak
+2024-01-15 13:00:00 INFO  [health-check] All services HEALTHY — p99 latency 138ms
+2024-01-15 14:00:00 INFO  [orders-service] Processing rate: 218 orders/min — afternoon peak
+2024-01-15 15:00:00 INFO  [health-check] All services HEALTHY — disk alert acknowledged

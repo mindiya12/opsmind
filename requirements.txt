@@ -1,0 +1,30 @@
+# Core LangChain stack
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+
+# LLM provider — Groq (fast, free tier available at console.groq.com)
+langchain-groq>=0.2.0
+
+# Vector store — ChromaDB integration for LangChain
+langchain-chroma>=0.1.0
+
+# Embeddings — HuggingFace local models (no API key, runs on CPU)
+langchain-huggingface>=0.1.0
+sentence-transformers>=2.7.0
+langchain-text-splitters
+# Agent orchestration — LangGraph for multi-agent state machines
+langgraph>=0.2.0
+
+# Vector database — ChromaDB stores and retrieves embeddings
+chromadb>=0.5.0
+
+# UI — Streamlit for the chat interface (Day 5)
+streamlit>=1.38.0
+
+# Config — load .env files safely
+python-dotenv>=1.0.0
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
